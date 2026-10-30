@@ -1,0 +1,19 @@
+# Configuração estática do Traefik
+# Exemplo demonstrativo de proxy reverso HTTP.
+
+api:
+  dashboard: false
+
+entryPoints:
+  web:
+    address: ":80"
+
+providers:
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+log:
+  level: INFO
+
+accessLog: {}
