@@ -1,5 +1,7 @@
 # Traefik Proxy Reverso Seguro
 
+![Ilustração do fluxo do projeto: cliente, DNS, firewall, Traefik e aplicação na rede Docker](assets/traefik-proxy-architecture.jpg)
+
 ### Publicação centralizada de aplicações internas com Docker, DNS e controle de acesso por firewall.
 
 <p align="center">
