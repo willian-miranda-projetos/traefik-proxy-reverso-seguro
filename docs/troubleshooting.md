@@ -97,7 +97,7 @@ curl http://127.0.0.1:8080/
 O resultado foi semelhante a:
 
 ```text
-curl: (7) Failed to connect to 127.0.0.1 port 80:
+curl: (7) Failed to connect to 127.0.0.1 port 8080:
 Could not connect to server
 ```
 
