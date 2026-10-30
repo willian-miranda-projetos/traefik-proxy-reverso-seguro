@@ -55,7 +55,7 @@ sudo docker network ls
 
 A rede que será utilizada pelo proxy precisa permitir comunicação com as aplicações de destino.
 
-A versão usada no exemplo do laboratório é fixada no Compose (`traefik:v3.3.6`). Em ambientes reais, valide a versão adotada e sua política de atualização antes de aplicar qualquer mudança.
+A versão usada no exemplo do laboratório é fixada no Compose (`traefik:v3.7.16`). Em ambientes reais, valide a versão adotada e sua política de atualização antes de aplicar qualquer mudança.
 
 **Importante:** antes de modificar um ambiente existente, faça backup dos arquivos de configuração e identifique os serviços que não devem ser interrompidos.
 
