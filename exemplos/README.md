@@ -95,7 +95,7 @@ docker compose -f exemplos/docker-compose.yml logs -f traefik
 
 ## 7. Testar o roteamento
 
-O laboratório publica a porta 8080 somente no endereço de loopback do computador.
+O laboratório publica a porta 8080 do host somente no endereço de loopback e a encaminha para a porta 80 do contêiner Traefik (`127.0.0.1:8080:80`). O Traefik escuta na porta 80 do contêiner. A rota encaminha para a porta interna da aplicação; neste laboratório, o Whoami escuta na porta 80 (`http://web-app:80`). Em outras aplicações, confirme a porta interna em que o serviço escuta.
 
 Para testar a regra de roteamento sem precisar criar um registro DNS, execute:
 
@@ -136,7 +136,7 @@ docker network inspect proxy-net
 
 Os contêineres Traefik e Whoami devem estar conectados à mesma rede.
 
-A aplicação não possui uma porta publicada diretamente no host. Seu acesso ocorre por meio do proxy.
+A aplicação não possui uma porta publicada diretamente no host. Seu acesso ocorre por meio do proxy; a porta interna 80 é específica deste exemplo Whoami.
 
 ## 10. Encerrar o laboratório
 
