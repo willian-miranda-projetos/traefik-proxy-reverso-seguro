@@ -38,7 +38,7 @@ ERR Command error error="command traefik error:
 error while building entryPoint web:
 building listener:
 error opening listener:
-listen tcp 10.20.30.40:80:
+listen tcp 192.0.2.10:80:
 bind: cannot assign requested address"
 ```
 
@@ -60,13 +60,13 @@ entryPoints:
     address: ":80"
 ```
 
-O endereço IP específico do servidor permaneceu configurado no mapeamento de portas do Docker Compose.
+O endereço IP específico do host permaneceu configurado no mapeamento de portas do Docker Compose. Nesse mapeamento, a porta à esquerda dos dois-pontos é a publicada no host; a porta à direita é a porta de escuta dentro do contêiner.
 
 Exemplo:
 
 ```yaml
 ports:
-  - "10.20.30.40:80:80"
+  - "192.0.2.10:80:80"
 ```
 
 ### Resultado
@@ -91,7 +91,7 @@ Após a correção:
 Durante um teste local, foi executado:
 
 ```bash
-curl http://127.0.0.1/
+curl http://127.0.0.1:8080/
 ```
 
 O resultado foi semelhante a:
@@ -108,7 +108,7 @@ O serviço Traefik estava em execução, mas sua porta publicada estava vinculad
 Exemplo:
 
 ```text
-10.20.30.40:80 -> 80/tcp
+192.0.2.10:80 -> 80/tcp
 ```
 
 Isso significa que a publicação foi realizada no endereço específico do servidor, e não no endereço de loopback `127.0.0.1`.
@@ -118,7 +118,7 @@ Isso significa que a publicação foi realizada no endereço específico do serv
 O teste foi realizado utilizando o endereço IP efetivamente configurado para publicação:
 
 ```bash
-curl http://10.20.30.40/
+curl http://192.0.2.10/
 ```
 
 Para testar também o roteamento por domínio, foi utilizado o cabeçalho `Host`.
@@ -126,7 +126,7 @@ Para testar também o roteamento por domínio, foi utilizado o cabeçalho `Host`
 ```bash
 curl -sS -D - -o /dev/null --max-time 5 \
   -H 'Host: app.example.internal' \
-  http://10.20.30.40/
+  http://192.0.2.10/
 ```
 
 ### Resultado
@@ -171,7 +171,7 @@ O resultado deve apresentar o endereço IP esperado do servidor.
 ### Etapa 2 — testar a porta publicada
 
 ```bash
-curl -v --max-time 5 http://10.20.30.40/
+curl -v --max-time 5 http://192.0.2.10/
 ```
 
 ### Etapa 3 — testar o cabeçalho Host
@@ -179,7 +179,7 @@ curl -v --max-time 5 http://10.20.30.40/
 ```bash
 curl -sS -D - -o /dev/null \
   -H 'Host: app.example.internal' \
-  http://10.20.30.40/
+  http://192.0.2.10/
 ```
 
 ### Etapa 4 — verificar a configuração dinâmica
@@ -236,7 +236,7 @@ Também é importante testar o serviço diretamente de dentro do contêiner Trae
 
 ```bash
 sudo docker exec traefik \
-  wget -S -O - http://web-app:8080/
+  wget -S -O - http://web-app:80/
 ```
 
 Se o utilitário `wget` não estiver instalado na imagem, utilize um contêiner temporário de diagnóstico conectado à mesma rede Docker.
@@ -375,7 +375,7 @@ A sequência pode ser adaptada conforme o sintoma. Por exemplo, quando o contêi
 | Verificar regras Docker | `sudo iptables -S DOCKER-USER` |
 | Consultar contadores | `sudo iptables -vnL DOCKER-USER` |
 | Validar DNS | `nslookup app.example.internal` |
-| Validar rota | `curl -v -H 'Host: app.example.internal' http://10.20.30.40/` |
+| Validar rota | `curl -v -H 'Host: app.example.internal' http://192.0.2.10/` |
 | Validar Compose | `sudo docker compose -f /path/to/compose.yaml config -q` |
 
 ## 10. Boas práticas para troubleshooting
