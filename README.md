@@ -125,10 +125,10 @@ http:
     sistema:
       loadBalancer:
         servers:
-          - url: "http://web-app:8080"
+          - url: "http://web-app:80"
 ```
 
-O Traefik identifica o domínio solicitado e encaminha o tráfego para a aplicação na porta interna correspondente.
+O Traefik identifica o domínio solicitado e encaminha o tráfego para a porta em que a aplicação escuta na rede Docker. Neste exemplo, `web-app:80` usa a porta interna 80; essa porta varia conforme a aplicação. Ela é independente da porta publicada no host.
 
 ### 4. Integração com DNS
 
@@ -138,7 +138,7 @@ Exemplo fictício:
 
 | Registro | Nome | Endereço |
 |---|---|---|
-| A | app.example.internal | 10.20.30.40 |
+| A | app.example.internal | 192.0.2.10 |
 
 Validação:
 
@@ -178,7 +178,7 @@ Durante a implantação, ocorreu uma falha na inicialização do Traefik.
 O log apresentava uma mensagem semelhante a:
 
 ```text
-listen tcp 10.20.30.40:80: bind: cannot assign requested address
+listen tcp 192.0.2.10:80: bind: cannot assign requested address
 ```
 
 A causa foi a tentativa de utilizar o endereço IP do host como endereço de escuta dentro do contêiner.
@@ -224,7 +224,7 @@ sudo docker logs --tail 80 traefik
 ```bash
 curl -sS -D - -o /dev/null \
   -H 'Host: app.example.internal' \
-  http://10.20.30.40/
+  http://192.0.2.10/
 ```
 
 No ambiente de implementação, a aplicação retornou:
