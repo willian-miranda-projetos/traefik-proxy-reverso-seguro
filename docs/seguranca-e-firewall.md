@@ -50,7 +50,7 @@ A estratégia contempla três comportamentos:
 
 ### Exemplo conceitual de regras
 
-O exemplo abaixo utiliza endereços e redes fictícios. Não representa a lista de permissões do ambiente original.
+O exemplo abaixo usa faixas reservadas para documentação e é apenas ilustrativo; não representa uma lista de permissões real.
 
 ```bash
 # Permitir conexões estabelecidas ou relacionadas
@@ -61,9 +61,9 @@ iptables -A DOCKER-USER \
 # Permitir HTTP de uma rede autorizada
 iptables -A DOCKER-USER \
   -p tcp \
-  -s 10.20.0.0/16 \
+  -s 198.51.100.0/24 \
   -m conntrack --ctstate NEW \
-  --ctorigdst 10.20.30.40 \
+  --ctorigdst 192.0.2.10 \
   --ctorigdstport 80 \
   -j ACCEPT
 
@@ -71,12 +71,12 @@ iptables -A DOCKER-USER \
 iptables -A DOCKER-USER \
   -p tcp \
   -m conntrack \
-  --ctorigdst 10.20.30.40 \
+  --ctorigdst 192.0.2.10 \
   --ctorigdstport 80 \
   -j DROP
 ```
 
-**Atenção:** esse trecho é ilustrativo, não um script pronto para produção. Em uma implantação real, as regras devem ser adaptadas às redes autorizadas, ao endereço original de destino, à ordem das regras existentes e à política de acesso.
+**Atenção:** esse trecho é ilustrativo, não um script pronto para produção. Antes de acrescentar regras, inspecione toda a cadeia `DOCKER-USER`: regras `ACCEPT` anteriores podem encerrar a avaliação antes de regras de bloqueio adicionadas depois. A ordem e as regras já existentes determinam o resultado. Em uma implantação real, as regras devem ser adaptadas às redes autorizadas, ao endereço original de destino, à ordem das regras existentes e à política de acesso.
 
 O uso de `--ctorigdst` e `--ctorigdstport` permite avaliar o endereço e a porta de destino originais da conexão, mesmo após o processamento de DNAT pelo Docker.
 
@@ -98,7 +98,7 @@ As regras de firewall precisam continuar aplicadas após reinicializações do s
 
 Para isso, foi utilizado um script administrativo executado por uma unidade do systemd.
 
-A implementação utiliza verificações com `iptables -C` antes de inserir regras, evitando duplicações em execuções sucessivas.
+O padrão de exemplo utiliza verificações com `iptables -C` antes de inserir regras, evitando duplicações em execuções sucessivas.
 
 Exemplo conceitual:
 
