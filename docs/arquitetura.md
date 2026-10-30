@@ -74,7 +74,7 @@ http:
     sistema:
       loadBalancer:
         servers:
-          - url: "http://web-app:8080"
+          - url: "http://web-app:80"
 ```
 
 Nesse exemplo:
@@ -82,9 +82,9 @@ Nesse exemplo:
 - `app.example.internal` representa o domínio utilizado pelo usuário.
 - `web` identifica o ponto de entrada HTTP.
 - `sistema` identifica o serviço configurado no Traefik.
-- `web-app:8080` representa o destino interno na rede Docker.
+- `web-app:80` é a porta interna usada neste exemplo. A porta interna varia conforme a configuração da aplicação; não precisa coincidir com a porta publicada no host.
 
-O endereço do serviço é resolvido pela rede Docker compartilhada entre o proxy e a aplicação.
+O endereço do serviço é resolvido pela rede Docker compartilhada entre o proxy e a aplicação. O exemplo usa porta interna 80; confirme a porta em que cada aplicação realmente escuta.
 
 ## 6. Organização das redes
 
@@ -118,3 +118,22 @@ As principais medidas incluem:
 - Controle de acesso às portas publicadas.
 - Restrição de origens por regras de firewall.
 - Utilização da cadeia `DOCKER-USER` para controle
+
+
+## 8. Publicação de portas e portas internas
+
+A porta de entrada do Traefik e a porta do serviço de destino são valores distintos. No laboratório, o host publica `127.0.0.1:8080` para a porta `80` do contêiner Traefik (`127.0.0.1:8080:80`). A configuração estática faz o Traefik escutar em `:80` dentro do contêiner. Já a rota encaminha para a porta em que a aplicação escuta na rede Docker; no exemplo Whoami, essa porta é `80` (`http://web-app:80`).
+
+Em outras aplicações, a porta interna pode ser diferente. Verifique a configuração ou a documentação da aplicação e use esse valor no destino da rota. Não confunda a porta publicada no host com a porta interna do Traefik ou da aplicação.
+
+## 9. Limites e evolução
+
+O laboratório deste repositório demonstra roteamento HTTP local. Ele não substitui o desenho de produção, nem configura TLS, DNS corporativo ou regras de firewall do ambiente. Antes de uma implantação real, valide topologia, exposição de portas, origens autorizadas, certificados, monitoramento, atualização de imagens e procedimento de reversão.
+
+## 10. Considerações finais
+
+A separação entre entrada, proxy, rede Docker e aplicação facilita a manutenção e reduz a necessidade de publicar diretamente cada serviço no host. Cada mudança deve ser validada no contexto da rede e da aplicação correspondentes.
+
+---
+
+*Diagrama e endereços de exemplo são ilustrativos. Nomes, endereços e configurações não identificam uma infraestrutura real.*
