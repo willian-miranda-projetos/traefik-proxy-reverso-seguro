@@ -55,6 +55,8 @@ sudo docker network ls
 
 A rede que será utilizada pelo proxy precisa permitir comunicação com as aplicações de destino.
 
+A versão usada no exemplo do laboratório é fixada no Compose (`traefik:v3.3.6`). Em ambientes reais, valide a versão adotada e sua política de atualização antes de aplicar qualquer mudança.
+
 **Importante:** antes de modificar um ambiente existente, faça backup dos arquivos de configuração e identifique os serviços que não devem ser interrompidos.
 
 ## 4. Estrutura de diretórios
@@ -154,7 +156,7 @@ http:
     web-app:
       loadBalancer:
         servers:
-          - url: "http://web-app:8080"
+          - url: "http://web-app:80"
 ```
 
 ### Entendendo a configuração
@@ -175,7 +177,7 @@ Define o serviço de destino.
 
 Encaminha a requisição para o endereço interno da aplicação.
 
-O nome `web-app` utilizado no destino deve ser resolvido pela rede Docker compartilhada.
+O nome `web-app` utilizado no destino deve ser resolvido pela rede Docker compartilhada. A porta `80` é específica do exemplo Whoami; para outra aplicação, informe a porta em que ela escuta dentro da rede Docker. Essa porta é independente da porta publicada no host.
 
 ## 7. Configuração do Docker Compose
 
@@ -186,7 +188,7 @@ Exemplo simplificado:
 ```yaml
 services:
   traefik:
-    image: traefik:v3
+    image: traefik:v3.3.6
     container_name: traefik
     restart: unless-stopped
     init: true
@@ -195,7 +197,7 @@ services:
     pids_limit: 256
 
     ports:
-      - "10.20.30.40:80:80"
+      - "192.0.2.10:80:80"
 
     volumes:
       - /etc/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
@@ -274,7 +276,7 @@ Exemplo:
 
 | Tipo | Nome | Endereço |
 |---|---|---|
-| A | app.example.internal | 10.20.30.40 |
+| A | app.example.internal | 192.0.2.10 |
 
 A criação do registro deve seguir a política de administração DNS do ambiente.
 
@@ -321,7 +323,7 @@ Antes de depender exclusivamente do DNS, é possível testar a regra utilizando 
 ```bash
 curl -sS -D - -o /dev/null --max-time 5 \
   -H 'Host: app.example.internal' \
-  http://10.20.30.40/
+  http://192.0.2.10/
 ```
 
 Esse teste permite verificar se o Traefik identifica o domínio e encaminha a requisição ao serviço correto.
@@ -353,7 +355,7 @@ A validação pelo navegador complementa os testes de rede e de linha de comando
 Mensagem semelhante a:
 
 ```text
-listen tcp 10.20.30.40:80: bind: cannot assign requested address
+listen tcp 192.0.2.10:80: bind: cannot assign requested address
 ```
 
 Uma causa possível é configurar o Traefik para escutar no endereço IP do host dentro do contêiner.
