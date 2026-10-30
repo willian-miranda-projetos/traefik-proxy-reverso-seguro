@@ -9,7 +9,7 @@
 
 services:
   traefik:
-    image: traefik:v3
+    image: traefik:v3.3.6
     container_name: traefik-demo
     restart: unless-stopped
 
@@ -50,6 +50,4 @@ networks:
 # - 127.0.0.1:8080:80: limita a publicação ao próprio computador, evitando exposição na rede.
 # A aplicação não possui porta publicada no host. Esse é um detalhe importante para demonstrar a redução da superfície de exposição.
 
-# Atenção: o arquivo depende dos outros dois exemplos que já criamos. A rota exemplo-app.yml também precisa apontar para http://web-app:80, pois essa é a porta interna da aplicação whoami. Portanto, vamos ajustar esse detalhe antes de considerar o laboratório pronto para execução.
-
-    
+# A porta 8080 é publicada apenas no loopback do host e encaminhada para a porta 80 do Traefik no contêiner. A rota usa a porta interna 80 do Whoami; outras aplicações podem escutar em uma porta diferente.
