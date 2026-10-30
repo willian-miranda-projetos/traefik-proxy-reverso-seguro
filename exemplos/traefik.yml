@@ -17,3 +17,6 @@ log:
   level: INFO
 
 accessLog: {}
+
+
+# Este é um exemplo HTTP para laboratório. Não representa uma configuração definitiva de produção com HTTPS.
