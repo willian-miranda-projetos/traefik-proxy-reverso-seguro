@@ -1,0 +1,55 @@
+# Exemplo didático de proxy reverso com Traefik e Docker Compose
+#
+# Estrutura esperada:
+# exemplos/
+# ├── docker-compose.yml
+# ├── traefik.yml
+# └── rotas/
+#     └── exemplo-app.yml
+
+services:
+  traefik:
+    image: traefik:v3
+    container_name: traefik-demo
+    restart: unless-stopped
+
+    ports:
+      # Publicação somente no loopback para laboratório local.
+      - "127.0.0.1:8080:80"
+
+    volumes:
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./rotas:/etc/traefik/dynamic:ro
+
+    networks:
+      - proxy-net
+
+    mem_limit: 256m
+    cpus: 0.5
+
+  web-app:
+    image: traefik/whoami:v1.11
+    container_name: web-app-demo
+    restart: unless-stopped
+
+    networks:
+      - proxy-net
+
+    # Não publicar a porta da aplicação no host.
+    # O acesso ocorre exclusivamente pela rede Docker.
+
+networks:
+  proxy-net:
+    name: proxy-net
+    driver: bridge
+
+# Como funciona esse exemplo?
+# - traefik-demo: recebe as requisições na porta 8080 do computador local.
+# - web-app-demo: aplicação de demonstração que responde às requisições.
+# - proxy-net: rede privada que permite a comunicação entre os contêineres.
+# - 127.0.0.1:8080:80: limita a publicação ao próprio computador, evitando exposição na rede.
+# A aplicação não possui porta publicada no host. Esse é um detalhe importante para demonstrar a redução da superfície de exposição.
+
+# Atenção: o arquivo depende dos outros dois exemplos que já criamos. A rota exemplo-app.yml também precisa apontar para http://web-app:80, pois essa é a porta interna da aplicação whoami. Portanto, vamos ajustar esse detalhe antes de considerar o laboratório pronto para execução.
+
+    
