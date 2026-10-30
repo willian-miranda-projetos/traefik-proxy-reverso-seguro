@@ -1,0 +1,29 @@
+# Rota dinâmica demonstrativa
+# Encaminha as requisições para uma aplicação na rede Docker.
+
+http:
+  routers:
+    exemplo-app:
+      rule: "Host(`app.example.internal`)"
+      entryPoints:
+        - web
+      service: exemplo-app
+
+  services:
+    exemplo-app:
+      loadBalancer:
+        servers:
+          - url: "http://web-app:8080"
+
+# Entendendo a configuração
+
+# Elemento	      Função
+# routers	        Define as regras de entrada
+# exemplo-app	    Identifica o roteador
+# Host()	        Determina o domínio que será atendido
+# entryPoints	    Define o ponto de entrada HTTP
+# services	      Define o serviço de destino
+# loadBalancer	  Encaminha as requisições
+# web-app:8080	  Aplicação de destino na rede Docker
+
+#Um detalhe importante: web-app é um nome fictício. Em uma implantação real, ele precisa corresponder a um serviço ou nome resolvível na rede Docker compartilhada com o Traefik, e a porta 8080 precisa ser a porta interna correta da aplicação.
