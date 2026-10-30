@@ -117,8 +117,12 @@ As principais medidas incluem:
 
 - Controle de acesso às portas publicadas.
 - Restrição de origens por regras de firewall.
-- Utilização da cadeia `DOCKER-USER` para controle
+- Utilização da cadeia `DOCKER-USER` para controle do tráfego encaminhado.
+- Dashboard administrativo desativado no laboratório.
+- Configurações montadas como somente leitura no exemplo.
+- Acesso HTTP tratado como demonstração; TLS e controles de produção exigem validação própria.
 
+As regras de firewall dependem da topologia e da ordem já existente. Inspecione a cadeia antes de alterá-la e valide os resultados sem interromper o acesso administrativo.
 
 ## 8. Publicação de portas e portas internas
 
